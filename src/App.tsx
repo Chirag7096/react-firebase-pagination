@@ -48,7 +48,8 @@ const usePaginate: usePaginateType = ({
     getDocs(mainQuery).then((res) => {
       setTotalDocs(res.docs.length)
     })
-    apiCall(mainQuery)
+    const q = query(mainQuery, limit(pageSize))
+    apiCall(q)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
