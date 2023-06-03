@@ -53,11 +53,11 @@ const usePaginate: usePaginateType = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getLastEle = (array: any[]) => array[array.length - 1]
+  const getLastEle = (array: any[]) => array[array.length - 1] || null
 
   const getNext = () => {
-    let q = query(mainQuery, limit(pageSize))
-    q = query(q, startAfter(getLastEle(pages)))
+    let q = query(mainQuery, startAfter(getLastEle(pages)))
+    q = query(q, limit(pageSize))
     apiCall(q)
   }
 
@@ -65,8 +65,8 @@ const usePaginate: usePaginateType = ({
     if (pageByPage) {
       const newArray = pages.slice(0, -2)
       newArray && setPages(newArray)
-      let q = query(mainQuery, limit(pageSize))
-      q = query(q, startAfter(getLastEle(newArray)))
+      let q = query(mainQuery, startAfter(getLastEle(newArray)))
+      q = query(q, limit(pageSize))
       apiCall(q)
     }
   }
