@@ -4,6 +4,7 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
+  "author": "Chirag",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -18,6 +19,18 @@
     "prepare": "yarn build",
     "prepublishOnly": "yarn prettier && yarn lint"
   },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "firebase pagination",
+    "react firebase pagination"
+  ],
   "devDependencies": {
     "@types/react": "^18.2.8",
     "@typescript-eslint/eslint-plugin": "^5.59.8",

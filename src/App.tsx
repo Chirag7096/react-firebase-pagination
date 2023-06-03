@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import {
   getDocs,
   query,
@@ -13,11 +13,11 @@ type usePaginateType = (props: {
   pageSize: number
   pageByPage: boolean
 }) => {
-  // getNext: Function;
-  // getPrevious: Function;
-  // data: DocumentChangeType;
-  // totalDocs: number;
-  // loading: boolean;
+  getNext: () => void
+  getPrevious: () => void
+  data: QueryDocumentSnapshot[]
+  totalDocs: number
+  loading: boolean
 }
 
 const usePaginate: usePaginateType = ({
@@ -30,29 +30,27 @@ const usePaginate: usePaginateType = ({
   const [totalDocs, setTotalDocs] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  const apiCall = useCallback(
-    (q: Query) => {
-      setLoading(true)
-      return new Promise((reslove, reject) => {
-        getDocs(q)
-          .then((res) => {
-            setData((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
-            setPages((e) => [...e, res.docs[pageSize - 1]])
-            reslove(res)
-          })
-          .catch((err) => reject(err))
-          .finally(() => setLoading(false))
-      })
-    },
-    [pageByPage, pageSize],
-  )
+  const apiCall = (q: Query) => {
+    setLoading(true)
+    return new Promise((reslove, reject) => {
+      getDocs(q)
+        .then((res) => {
+          setData((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
+          setPages((e) => [...e, res.docs[pageSize - 1]])
+          reslove(res)
+        })
+        .catch((err) => reject(err))
+        .finally(() => setLoading(false))
+    })
+  }
 
   useEffect(() => {
     getDocs(mainQuery).then((res) => {
       setTotalDocs(res.docs.length)
     })
     apiCall(mainQuery)
-  }, [mainQuery, apiCall])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const getLastEle = (array: any[]) => array[array.length - 1]
 
