@@ -6,6 +6,7 @@ import {
   limit,
   Query,
   QueryDocumentSnapshot,
+  onSnapshot,
 } from 'firebase/firestore'
 
 type data = {
@@ -38,6 +39,7 @@ const usePaginate: usePaginateType = ({
 }) => {
   const [data, setData] = useState<QueryDocumentSnapshot[]>([])
   const [lastSnap, setLastSnap] = useState<QueryDocumentSnapshot[]>([])
+  const [query, setQuery] = useState(addQuery(mainQuery, limit, pageSize))
   const [totals, setTotals] = useState<{
     totalDocs: number
     totalPages: number
@@ -47,19 +49,16 @@ const usePaginate: usePaginateType = ({
   })
   const [loading, setLoading] = useState(false)
 
-  const apiCall = (q: Query) => {
+  useEffect(() => {
     setLoading(true)
-    return new Promise((reslove, reject) => {
-      getDocs(q)
-        .then((res) => {
-          setData((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
-          setLastSnap((e) => [...e, res.docs[pageSize - 1]])
-          reslove(res)
-        })
-        .catch((err) => reject(err))
-        .finally(() => setLoading(false))
+    const unsubscribe = onSnapshot(query, (res) => {
+      setData((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
+      setLastSnap((e) => [...e, res.docs[pageSize - 1]])
+      setLoading(false)
     })
-  }
+    return unsubscribe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
 
   useEffect(() => {
     getDocs(mainQuery).then((res) => {
@@ -68,8 +67,6 @@ const usePaginate: usePaginateType = ({
         totalPages: Math.ceil(res.docs.length / pageSize),
       })
     })
-    const q = query(mainQuery, limit(pageSize))
-    apiCall(q)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -79,7 +76,7 @@ const usePaginate: usePaginateType = ({
     if (lastSnap.length < totals.totalPages) {
       let q = addQuery(mainQuery, startAfter, getLastEle(lastSnap))
       q = addQuery(q, limit, pageSize)
-      apiCall(q)
+      setQuery(q)
     }
   }
 
@@ -89,7 +86,7 @@ const usePaginate: usePaginateType = ({
       setLastSnap(newArray)
       let q = addQuery(mainQuery, startAfter, getLastEle(newArray))
       q = addQuery(q, limit, pageSize)
-      apiCall(q)
+      setQuery(q)
     }
   }
 
