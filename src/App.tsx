@@ -8,6 +8,13 @@ import {
   QueryDocumentSnapshot,
 } from 'firebase/firestore'
 
+type data = {
+  docs: QueryDocumentSnapshot[]
+  totalDocs: number
+  totalPages: number
+  currentPage: number
+}
+
 type usePaginateType = (props: {
   query: Query
   pageSize: number
@@ -15,8 +22,7 @@ type usePaginateType = (props: {
 }) => {
   getNext: () => void
   getPrevious: () => void
-  data: QueryDocumentSnapshot[]
-  totalDocs: number
+  data: data
   loading: boolean
 }
 
@@ -26,8 +32,14 @@ const usePaginate: usePaginateType = ({
   pageByPage = false,
 }) => {
   const [data, setData] = useState<QueryDocumentSnapshot[]>([])
-  const [pages, setPages] = useState<QueryDocumentSnapshot[]>([])
-  const [totalDocs, setTotalDocs] = useState(0)
+  const [lastSnap, setLastSnap] = useState<QueryDocumentSnapshot[]>([])
+  const [totals, setTotals] = useState<{
+    totalDocs: number
+    totalPages: number
+  }>({
+    totalDocs: 0,
+    totalPages: 0,
+  })
   const [loading, setLoading] = useState(false)
 
   const apiCall = (q: Query) => {
@@ -36,7 +48,7 @@ const usePaginate: usePaginateType = ({
       getDocs(q)
         .then((res) => {
           setData((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
-          setPages((e) => [...e, res.docs[pageSize - 1]])
+          setLastSnap((e) => [...e, res.docs[pageSize - 1]])
           reslove(res)
         })
         .catch((err) => reject(err))
@@ -46,7 +58,10 @@ const usePaginate: usePaginateType = ({
 
   useEffect(() => {
     getDocs(mainQuery).then((res) => {
-      setTotalDocs(res.docs.length)
+      setTotals({
+        totalDocs: res.docs.length,
+        totalPages: Math.ceil(res.docs.length / pageSize),
+      })
     })
     const q = query(mainQuery, limit(pageSize))
     apiCall(q)
@@ -56,22 +71,33 @@ const usePaginate: usePaginateType = ({
   const getLastEle = (array: any[]) => array[array.length - 1] || null
 
   const getNext = () => {
-    let q = query(mainQuery, startAfter(getLastEle(pages)))
-    q = query(q, limit(pageSize))
-    apiCall(q)
+    if (lastSnap.length < totals.totalPages) {
+      let q = query(mainQuery, startAfter(getLastEle(lastSnap)))
+      q = query(q, limit(pageSize))
+      apiCall(q)
+    }
   }
 
   const getPrevious = () => {
-    if (pageByPage) {
-      const newArray = pages.slice(0, -2)
-      newArray && setPages(newArray)
+    if (pageByPage && lastSnap.length) {
+      const newArray = lastSnap.slice(0, -2)
+      newArray && setLastSnap(newArray)
       let q = query(mainQuery, startAfter(getLastEle(newArray)))
       q = query(q, limit(pageSize))
       apiCall(q)
     }
   }
 
-  return { getNext, getPrevious, data, totalDocs, loading }
+  return {
+    getNext,
+    getPrevious,
+    loading,
+    data: {
+      docs: data,
+      ...totals,
+      currentPage: lastSnap.length,
+    },
+  }
 }
 
 export default usePaginate
