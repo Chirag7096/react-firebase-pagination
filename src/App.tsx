@@ -26,6 +26,11 @@ type usePaginateType = (props: {
   loading: boolean
 }
 
+const addQuery = (q: Query, fun: (val: any) => any, value: any) => {
+  value && (q = query(q, fun(value)))
+  return q
+}
+
 const usePaginate: usePaginateType = ({
   query: mainQuery,
   pageSize,
@@ -68,22 +73,22 @@ const usePaginate: usePaginateType = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getLastEle = (array: any[]) => array[array.length - 1] || null
+  const getLastEle = (array: any[]) => array[array.length - 1]
 
   const getNext = () => {
     if (lastSnap.length < totals.totalPages) {
-      let q = query(mainQuery, startAfter(getLastEle(lastSnap)))
-      q = query(q, limit(pageSize))
+      let q = addQuery(mainQuery, startAfter, getLastEle(lastSnap))
+      q = addQuery(q, limit, pageSize)
       apiCall(q)
     }
   }
 
   const getPrevious = () => {
-    if (pageByPage && lastSnap.length) {
+    if (pageByPage && lastSnap.length > 1) {
       const newArray = lastSnap.slice(0, -2)
-      newArray && setLastSnap(newArray)
-      let q = query(mainQuery, startAfter(getLastEle(newArray)))
-      q = query(q, limit(pageSize))
+      setLastSnap(newArray)
+      let q = addQuery(mainQuery, startAfter, getLastEle(newArray))
+      q = addQuery(q, limit, pageSize)
       apiCall(q)
     }
   }
