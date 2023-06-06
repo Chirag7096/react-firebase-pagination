@@ -60,8 +60,9 @@ const usePaginate: usePaginateType = ({
   }, [query, pageByPage, pageSize])
 
   useEffect(() => {
-    setQuery(addQuery(mainQuery, limit, pageSize))
+    setLoading(true)
     getDocs(mainQuery).then((res) => {
+      setQuery(addQuery(mainQuery, limit, pageSize))
       setTotals({
         totalDocs: res.docs.length,
         totalPages: Math.ceil(res.docs.length / pageSize),

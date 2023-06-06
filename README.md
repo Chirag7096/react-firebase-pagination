@@ -1,8 +1,8 @@
 # react-firebase-pagination
 
 A React Hook that makes it easy to paginate firestore collections.
-This hook provides _non cumulative_ pagination and does _not_ maintain references to previous
-documents, so it might be suitable for large document sets.
+This hook provides _cumulative_ pagination and does maintain references to previous
+documents, so it might not be suitable for large document sets.
 
 ## Support for Firebase 9
 
@@ -19,10 +19,10 @@ npm install use-pagination-firestore
 This is an example of a [Firestore](https://firebase.google.com/docs/firestore/).
 
 You can also change query during runtime. Hook will detect new query and start pagination from the beginning.
-Here is an example of controlling query's `limit` and `orderDirection` by React's state:
+Here is an example of controlling query's `orderDirection` by React's state:
 
 ```jsx
-const mainQuery = query(collection(db, '[collection]'))
+const mainQuery = query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'))
 
 const RecentPerfumes = () => {
   const { getNext, getPrevious, data, loading } = usePaginate({
