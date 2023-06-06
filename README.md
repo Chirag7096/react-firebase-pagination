@@ -16,9 +16,7 @@ npm install use-pagination-firestore
 
 ## Example Use
 
-This is an example of a "recently added perfumes" section built using [Material UI](https://material-ui.com/)
-and [Firestore](https://firebase.google.com/docs/firestore/). You can see it live on the Petrichor homepage [here](https://petrichor.se/), or
-[here](https://imgur.com/a/nUrgzaO) is a screencast.
+This is an example of a [Firestore](https://firebase.google.com/docs/firestore/).
 
 You can also change query during runtime. Hook will detect new query and start pagination from the beginning.
 Here is an example of controlling query's `limit` and `orderDirection` by React's state:
