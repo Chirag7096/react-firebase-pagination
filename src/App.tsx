@@ -57,8 +57,7 @@ const usePaginate: usePaginateType = ({
       setLoading(false)
     })
     return unsubscribe
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
+  }, [query, pageByPage, pageSize])
 
   useEffect(() => {
     getDocs(mainQuery).then((res) => {
@@ -67,8 +66,7 @@ const usePaginate: usePaginateType = ({
         totalPages: Math.ceil(res.docs.length / pageSize),
       })
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [mainQuery, pageSize])
 
   const getLastEle = (array: any[]) => array[array.length - 1]
 
