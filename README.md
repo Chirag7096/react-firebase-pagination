@@ -11,7 +11,7 @@ support for Firebase 9 and are backwards _incompatible_ with previous versions o
 ## Install
 
 ```
-npm install use-pagination-firestore
+npm install react-firebase-pagination
 ```
 
 ## Example Use
