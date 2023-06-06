@@ -14,6 +14,12 @@ support for Firebase 9 and are backwards _incompatible_ with previous versions o
 npm install react-firebase-pagination
 ```
 
+OR
+
+```
+yarn add react-firebase-pagination
+```
+
 ## Example Use
 
 This is an example of a [Firestore](https://firebase.google.com/docs/firestore/).
