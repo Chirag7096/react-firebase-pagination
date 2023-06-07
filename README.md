@@ -24,18 +24,18 @@ yarn add react-firebase-pagination
 
 | prop       | value     | description                                                                                                                           |
 | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| query      | `query`   | the query of your firebase database. e.g. `query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'))`. **required** |
-| pageSize   | `number`  | the number of items per page. defaults to `10`.                                                                                       |
-| pageByPage | `boolean` | load data page by page or in single page by adding more data. defaults to `false`.                                                    |
+| query      | `query`   | The query of your Firebase database. e.g. `query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'))`. **required** |
+| pageSize   | `number`  | The number of items per page. defaults to `10`.                                                                                       |
+| pageByPage | `boolean` | Load data page by page or in a single page by adding more data. defaults to `false`.                                                  |
 
 ### State
 
-| prop        | value      | description                                                     |
-| ----------- | ---------- | --------------------------------------------------------------- |
-| loading     | `boolean`  | is true when a page is loading.                                 |
-| data        | `object`   | data object current page, total page, total docs and docs array |
-| getNext     | `function` | will render the next page when called. takes no arguments.      |
-| getPrevious | `function` | will render the previous page when called. takes no arguments.  |
+| prop        | value      | description                                                               |
+| ----------- | ---------- | ------------------------------------------------------------------------- |
+| loading     | `boolean`  | Is true when a page is loading.                                           |
+| data        | `object`   | Data object with the current page, total page, total docs, and docs array |
+| getNext     | `function` | W'll render the next page when called. Take no arguments.                 |
+| getPrevious | `function` | W'll render the previous page when called. Take no arguments.             |
 
 ## Example Use
 
