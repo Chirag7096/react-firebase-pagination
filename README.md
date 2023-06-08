@@ -44,9 +44,11 @@ You can also change query during runtime. Hook will detect new query and start p
 Here is an example of controlling query's `orderDirection` by React's state:
 
 ```jsx
-const mainQuery = query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'))
+import usePaginate from 'react-firebase-pagination';
 
-const RecentPerfumes = () => {
+const mainQuery = query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'));
+
+const App = () => {
   const { getNext, getPrevious, data, loading } = usePaginate({
     pageSize: 10,
     pageByPage: true,
