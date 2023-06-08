@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import {
-  getDocs,
   query,
   startAfter,
   limit,
   Query,
   QueryDocumentSnapshot,
   onSnapshot,
+  getCountFromServer,
 } from 'firebase/firestore'
 
 type data = {
@@ -61,11 +61,11 @@ const usePaginate: usePaginateType = ({
 
   useEffect(() => {
     setLoading(true)
-    getDocs(mainQuery).then((res) => {
+    getCountFromServer(mainQuery).then((res) => {
       setQuery(addQuery(mainQuery, limit, pageSize))
       setTotals({
-        totalDocs: res.docs.length,
-        totalPages: Math.ceil(res.docs.length / pageSize),
+        totalDocs: res.data().count,
+        totalPages: Math.ceil(res.data().count / pageSize),
       })
     })
   }, [mainQuery, pageSize])
