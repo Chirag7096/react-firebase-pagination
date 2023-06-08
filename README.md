@@ -35,6 +35,8 @@ yarn add react-firebase-pagination
 | data        | `Object`   | Data object with the current page, total page, total docs, and docs array |
 | getNext     | `Function` | W'll render the next page when called. Take no arguments.                 |
 | getPrevious | `Function` | W'll render the previous page when called. Take no arguments.             |
+| hasNext     | `Boolean`  | It's true when a previous page has data.                                  |
+| hasPrevious | `Boolean`  | It's true when the next page has data.                                    |
 
 ## Example Use
 

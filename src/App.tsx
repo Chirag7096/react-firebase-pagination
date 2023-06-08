@@ -37,7 +37,8 @@ const usePaginate: usePaginateType = ({
   pageSize,
   pageByPage = false,
 }) => {
-  const [data, setData] = useState<QueryDocumentSnapshot[]>([])
+  const [loading, setLoading] = useState(false)
+  const [docs, setDocs] = useState<QueryDocumentSnapshot[]>([])
   const [lastSnap, setLastSnap] = useState<QueryDocumentSnapshot[]>([])
   const [query, setQuery] = useState(addQuery(mainQuery, limit, pageSize))
   const [totals, setTotals] = useState<{
@@ -47,12 +48,11 @@ const usePaginate: usePaginateType = ({
     totalDocs: 0,
     totalPages: 0,
   })
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setLoading(true)
     const unsubscribe = onSnapshot(query, (res) => {
-      setData((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
+      setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
       setLastSnap((e) => [...e, res.docs[pageSize - 1]])
       setLoading(false)
     })
@@ -95,9 +95,11 @@ const usePaginate: usePaginateType = ({
     getPrevious,
     loading,
     data: {
-      docs: data,
+      docs,
       ...totals,
       currentPage: lastSnap.length,
+      hasNext: lastSnap.length < totals.totalPages,
+      hasPrevious: 1 < lastSnap.length,
     },
   }
 }
