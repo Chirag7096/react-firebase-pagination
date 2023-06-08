@@ -23,18 +23,18 @@ yarn add react-firebase-pagination
 
 | **prop**   | **Type**  | **Default** | **description**                                                                    | **Required** |
 | ---------- | --------- | ----------- | ---------------------------------------------------------------------------------- | ------------ |
-| query      | `query`   | null        | The query of your Firebase database. e.g. `query(collection(db, '[collection]'))`. | ✔            |
-| pageSize   | `number`  | 10          | The number of items per page.                                                      |              |
-| pageByPage | `boolean` | false       | Load data page by page or in a single page by adding more data.                    |              |
+| query      | `Query`   | null        | The query of your Firebase database. e.g. `query(collection(db, '[collection]'))`. | ✔            |
+| pageSize   | `Number`  | 10          | The number of items per page.                                                      |              |
+| pageByPage | `Boolean` | false       | Load data page by page or in a single page by adding more data.                    |              |
 
 ### State
 
 | **prop**    | **value**  | **description**                                                           |
 | ----------- | ---------- | ------------------------------------------------------------------------- |
-| loading     | `boolean`  | Is true when a page is loading.                                           |
-| data        | `object`   | Data object with the current page, total page, total docs, and docs array |
-| getNext     | `function` | W'll render the next page when called. Take no arguments.                 |
-| getPrevious | `function` | W'll render the previous page when called. Take no arguments.             |
+| loading     | `Boolean`  | Is true when a page is loading.                                           |
+| data        | `Object`   | Data object with the current page, total page, total docs, and docs array |
+| getNext     | `Function` | W'll render the next page when called. Take no arguments.                 |
+| getPrevious | `Function` | W'll render the previous page when called. Take no arguments.             |
 
 ## Example Use
 
