@@ -22,11 +22,11 @@ yarn add react-firebase-pagination
 
 ### Options
 
-| prop       | value     | description                                                                                                                           |
-| ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| query      | `query`   | The query of your Firebase database. e.g. `query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'))`. **required** |
-| pageSize   | `number`  | The number of items per page. defaults to `10`.                                                                                       |
-| pageByPage | `boolean` | Load data page by page or in a single page by adding more data. defaults to `false`.                                                  |
+| prop       | value     | description                                                                                                              | **Required** |
+| ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------ | ------------ |
+| query      | `query`   | The query of your Firebase database. e.g. `query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'))`. | ✔            |
+| pageSize   | `number`  | The number of items per page. defaults to `10`.                                                                          |              |
+| pageByPage | `boolean` | Load data page by page or in a single page by adding more data. defaults to `false`.                                     |              |
 
 ### State
 
