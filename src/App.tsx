@@ -52,8 +52,10 @@ const usePaginate: usePaginateType = ({
   useEffect(() => {
     setLoading(true)
     const unsubscribe = onSnapshot(query, (res) => {
-      setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
-      setLastSnap((e) => [...e, res.docs[pageSize - 1]])
+      if (res.docs.length) {
+        setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
+        setLastSnap((e) => [...e, res.docs[pageSize - 1]])
+      }
       setLoading(false)
     })
     return unsubscribe
