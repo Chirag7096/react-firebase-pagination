@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   query,
   startAfter,
@@ -57,7 +57,8 @@ const usePaginate: usePaginateType = ({
       setLoading(false)
     })
     return unsubscribe
-  }, [query, pageByPage, pageSize])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
 
   useEffect(() => {
     setLoading(true)
@@ -68,7 +69,7 @@ const usePaginate: usePaginateType = ({
         totalPages: Math.ceil(res.data().count / pageSize),
       })
     })
-  }, [mainQuery, pageSize])
+  }, [mainQuery, pageSize, pageByPage])
 
   const getLastEle = (array: any[]) => array[array.length - 1]
 
@@ -89,19 +90,22 @@ const usePaginate: usePaginateType = ({
       setQuery(q)
     }
   }
-
-  return {
-    getNext,
-    getPrevious,
-    loading,
-    data: {
-      docs,
-      ...totals,
-      currentPage: lastSnap.length,
-      hasNext: lastSnap.length < totals.totalPages,
-      hasPrevious: 1 < lastSnap.length,
-    },
-  }
+  return useMemo(
+    () => ({
+      getNext,
+      getPrevious,
+      loading,
+      data: {
+        docs,
+        ...totals,
+        currentPage: lastSnap.length,
+        hasNext: lastSnap.length < totals.totalPages,
+        hasPrevious: 1 < lastSnap.length,
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [docs],
+  )
 }
 
 export default usePaginate
