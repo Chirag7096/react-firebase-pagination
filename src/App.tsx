@@ -34,7 +34,7 @@ const addQuery = (q: Query, fun: (val: any) => any, value: any) => {
 
 const usePaginate: usePaginateType = ({
   query: mainQuery,
-  pageSize,
+  pageSize = 10,
   pageByPage = false,
 }) => {
   const [loading, setLoading] = useState(false)
