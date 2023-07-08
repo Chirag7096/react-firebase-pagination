@@ -39,6 +39,15 @@ yarn add react-firebase-pagination
 | hasNext     | `Boolean`  | It's true when a previous page has data.                                  |
 | hasPrevious | `Boolean`  | It's true when the next page has data.                                    |
 
+## Data Object Contain
+
+| **prop**    | **value**   | **description**                                                           |
+| ----------- | ----------- | ------------------------------------------------------------------------- |
+| docs        | `Documents` | Is true when a page is loading.                                           |
+| totalDocs   | `Number`    | Data object with the current page, total page, total docs, and docs array |
+| totalPages  | `Number`    | W'll render the next page when called. Take no arguments.                 |
+| currentPage | `Number`    | W'll render the previous page when called. Take no arguments.             |
+
 ## Example Use
 
 This is an example of a [Firestore](https://firebase.google.com/docs/firestore/).

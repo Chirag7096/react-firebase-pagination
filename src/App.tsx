@@ -106,15 +106,15 @@ const usePaginate: usePaginateType = ({
   }
   return useMemo(
     () => ({
+      loading,
       getNext,
       getPrevious,
-      loading,
+      hasPrevious: 1 < lastSnap.length,
+      hasNext: lastSnap.length < totals.totalPages,
       data: {
         docs,
         ...totals,
         currentPage: lastSnap.length,
-        hasNext: lastSnap.length < totals.totalPages,
-        hasPrevious: 1 < lastSnap.length,
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
