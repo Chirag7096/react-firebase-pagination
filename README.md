@@ -30,23 +30,23 @@ yarn add react-firebase-pagination
 
 ### State
 
-| **prop**    | **value**  | **description**                                                           |
-| ----------- | ---------- | ------------------------------------------------------------------------- |
-| loading     | `Boolean`  | Is true when a page is loading.                                           |
-| data        | `Object`   | Data object with the current page, total page, total docs, and docs array |
-| getNext     | `Function` | W'll render the next page when called. Take no arguments.                 |
-| getPrevious | `Function` | W'll render the previous page when called. Take no arguments.             |
-| hasNext     | `Boolean`  | It's true when a previous page has data.                                  |
-| hasPrevious | `Boolean`  | It's true when the next page has data.                                    |
+| **prop**    | **value**  | **description**                                               |
+| ----------- | ---------- | ------------------------------------------------------------- |
+| loading     | `Boolean`  | Is true when a page is loading.                               |
+| data        | `Object`   | [Data Object](#data-object-contain)                           |
+| getNext     | `Function` | W'll render the next page when called. Take no arguments.     |
+| getPrevious | `Function` | W'll render the previous page when called. Take no arguments. |
+| hasNext     | `Boolean`  | It's true when a previous page has data.                      |
+| hasPrevious | `Boolean`  | It's true when the next page has data.                        |
 
-## Data Object Contain
+#### Data Object Contain
 
-| **prop**    | **value**   | **description**                                                           |
-| ----------- | ----------- | ------------------------------------------------------------------------- |
-| docs        | `Documents` | Is true when a page is loading.                                           |
-| totalDocs   | `Number`    | Data object with the current page, total page, total docs, and docs array |
-| totalPages  | `Number`    | W'll render the next page when called. Take no arguments.                 |
-| currentPage | `Number`    | W'll render the previous page when called. Take no arguments.             |
+| **prop**    | **value**   | **description**       |
+| ----------- | ----------- | --------------------- |
+| docs        | `Documents` | Document Array.       |
+| totalDocs   | `Number`    | Total Document count. |
+| totalPages  | `Number`    | Total Page count.     |
+| currentPage | `Number`    | Current Page Number.  |
 
 ## Example Use
 
@@ -56,7 +56,7 @@ You can also change query during runtime. Hook will detect new query and start p
 Here is an example of controlling query's `orderDirection` by React's state:
 
 ```jsx
-import usePaginate from 'react-firebase-pagination';
+import usePagination from 'react-firebase-pagination';
 
 const mainQuery = query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'));
 

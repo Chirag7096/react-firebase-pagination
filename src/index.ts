@@ -1,3 +1,3 @@
-import usePaginate from './App'
+import usePagination from './App'
 
-export default usePaginate
+export default usePagination

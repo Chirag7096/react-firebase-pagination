@@ -13,10 +13,10 @@ import {
 } from 'firebase/firestore'
 
 type data = {
-  docs: QueryDocumentSnapshot[]
   totalDocs: number
   totalPages: number
   currentPage: number
+  docs: QueryDocumentSnapshot[]
 }
 
 type usePaginateType = (props: {
@@ -25,23 +25,23 @@ type usePaginateType = (props: {
   pageByPage: boolean
   liveUpdate: boolean
 }) => {
+  data: data
+  error?: Error
+  loading: boolean
   getNext: () => void
   getPrevious: () => void
-  data: data
-  loading: boolean
 }
 
-const addQuery = (q: Query, fun: (val: any) => any, value: any) => {
-  value && (q = query(q, fun(value)))
-  return q
-}
+const addQuery = (q: Query, fun: (val: any) => any, value: any) =>
+  value ? query(q, fun(value)) : q
 
-const usePaginate: usePaginateType = ({
-  query: mainQuery,
+const usePagination: usePaginateType = ({
   pageSize = 10,
+  query: mainQuery,
   pageByPage = false,
   liveUpdate = false,
 }) => {
+  const [error, setError] = useState<Error>()
   const [loading, setLoading] = useState(false)
   const [docs, setDocs] = useState<QueryDocumentSnapshot[]>([])
   const [lastSnap, setLastSnap] = useState<QueryDocumentSnapshot[]>([])
@@ -54,21 +54,26 @@ const usePaginate: usePaginateType = ({
     totalPages: 0,
   })
 
-  const setDoc = (res: QuerySnapshot<DocumentData>) => {
+  const onRes = (res: QuerySnapshot<DocumentData>) => {
     if (res.docs.length) {
-      setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
       setLastSnap((e) => [...e, res.docs[pageSize - 1]])
+      setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
     }
     setLoading(false)
   }
 
+  const onErr = (err: Error) => {
+    setError(err)
+    setLoading(false)
+  }
+
   useEffect(() => {
+    setLoading(true)
     if (liveUpdate) {
-      setLoading(true)
-      const unsubscribe = onSnapshot(query, setDoc)
+      const unsubscribe = onSnapshot(query, onRes, onErr)
       return unsubscribe
     } else {
-      getDocs(query).then(setDoc)
+      getDocs(query).then(onRes).catch(onErr)
       return () => null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,6 +111,7 @@ const usePaginate: usePaginateType = ({
   }
   return useMemo(
     () => ({
+      error,
       loading,
       getNext,
       getPrevious,
@@ -122,4 +128,4 @@ const usePaginate: usePaginateType = ({
   )
 }
 
-export default usePaginate
+export default usePagination
