@@ -21,11 +21,12 @@ yarn add react-firebase-pagination
 
 ### Options
 
-| **prop**   | **Type**  | **Default** | **description**                                                                    | **Required** |
-| ---------- | --------- | ----------- | ---------------------------------------------------------------------------------- | ------------ |
-| query      | `Query`   | null        | The query of your Firebase database. e.g. `query(collection(db, '[collection]'))`. | ✔            |
-| pageSize   | `Number`  | 10          | The number of items per page.                                                      |              |
-| pageByPage | `Boolean` | false       | Load data page by page or in a single page by adding more data.                    |              |
+| **prop**   | **Type**  | **Default** | **description**                                                                                                                                                                                      | **Required** |
+| ---------- | --------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| query      | `Query`   | null        | The query of your Firebase database. e.g. `query(collection(db, '[collection]'))`.                                                                                                                   | ✔            |
+| pageSize   | `Number`  | 10          | The number of items per page.                                                                                                                                                                        |              |
+| pageByPage | `Boolean` | false       | When this option is True, data is loaded page by page like Google search, and when it's not, it loads data on a single page and appends new data on the bottom of current data like a Facebook feed. |              |
+| liveUpdate | `Boolean` | false       | Add Firebase snapshot listener to update data live                                                                                                                                                   |              |
 
 ### State
 

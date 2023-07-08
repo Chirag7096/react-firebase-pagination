@@ -1,12 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
 import {
   query,
-  startAfter,
   limit,
   Query,
-  QueryDocumentSnapshot,
+  getDocs,
+  startAfter,
   onSnapshot,
+  DocumentData,
+  QuerySnapshot,
   getCountFromServer,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore'
 
 type data = {
@@ -20,6 +23,7 @@ type usePaginateType = (props: {
   query: Query
   pageSize: number
   pageByPage: boolean
+  liveUpdate: boolean
 }) => {
   getNext: () => void
   getPrevious: () => void
@@ -36,6 +40,7 @@ const usePaginate: usePaginateType = ({
   query: mainQuery,
   pageSize = 10,
   pageByPage = false,
+  liveUpdate = false,
 }) => {
   const [loading, setLoading] = useState(false)
   const [docs, setDocs] = useState<QueryDocumentSnapshot[]>([])
@@ -49,16 +54,23 @@ const usePaginate: usePaginateType = ({
     totalPages: 0,
   })
 
+  const setDoc = (res: QuerySnapshot<DocumentData>) => {
+    if (res.docs.length) {
+      setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
+      setLastSnap((e) => [...e, res.docs[pageSize - 1]])
+    }
+    setLoading(false)
+  }
+
   useEffect(() => {
-    setLoading(true)
-    const unsubscribe = onSnapshot(query, (res) => {
-      if (res.docs.length) {
-        setDocs((e) => (pageByPage ? res.docs : [...e, ...res.docs]))
-        setLastSnap((e) => [...e, res.docs[pageSize - 1]])
-      }
-      setLoading(false)
-    })
-    return unsubscribe
+    if (liveUpdate) {
+      setLoading(true)
+      const unsubscribe = onSnapshot(query, setDoc)
+      return unsubscribe
+    } else {
+      getDocs(query).then(setDoc)
+      return () => null
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query])
 
