@@ -39,7 +39,7 @@ yarn add react-firebase-pagination
 | hasNext     | `Boolean`  | It's true when the next page has data.                                                                      |
 | hasPrevious | `Boolean`  | It's true when a previous page has data. (Work only in [pageByPage](#options) mode)                         |
 
-#### Data Object Contain
+### Data Object Contain
 
 | **prop**    | **value**   | **description**                                                                                    |
 | ----------- | ----------- | -------------------------------------------------------------------------------------------------- |
@@ -57,11 +57,13 @@ Here is an example of controlling query's `orderDirection` by React's state:
 
 ```jsx
 import usePagination from 'react-firebase-pagination';
+import { query, orderBy, collection } from 'firebase/firestore'
+import db from './your/database/path';
 
 const mainQuery = query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'));
 
 const App = () => {
-  const { getNext, getPrevious, data, loading } = usePaginate({
+  const { getNext, getPrevious, data, loading } = usePagination({
     pageSize: 10,
     pageByPage: true,
     query: mainQuery,
