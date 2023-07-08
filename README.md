@@ -30,23 +30,23 @@ yarn add react-firebase-pagination
 
 ### State
 
-| **prop**    | **value**  | **description**                                               |
-| ----------- | ---------- | ------------------------------------------------------------- |
-| loading     | `Boolean`  | Is true when a page is loading.                               |
-| data        | `Object`   | [Data Object](#data-object-contain)                           |
-| getNext     | `Function` | W'll render the next page when called. Take no arguments.     |
-| getPrevious | `Function` | W'll render the previous page when called. Take no arguments. |
-| hasNext     | `Boolean`  | It's true when a previous page has data.                      |
-| hasPrevious | `Boolean`  | It's true when the next page has data.                        |
+| **prop**    | **value**  | **description**                                                                                             |
+| ----------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| loading     | `Boolean`  | Is true when a page is loading.                                                                             |
+| data        | `Object`   | [Data Object](#data-object-contain)                                                                         |
+| getNext     | `Function` | W'll render the next page when called. (Take no arguments)                                                  |
+| getPrevious | `Function` | W'll render the previous page when called. (Take no arguments and work only in [pageByPage](#options) mode) |
+| hasNext     | `Boolean`  | It's true when the next page has data.                                                                      |
+| hasPrevious | `Boolean`  | It's true when a previous page has data. (Work only in [pageByPage](#options) mode)                         |
 
 #### Data Object Contain
 
-| **prop**    | **value**   | **description**       |
-| ----------- | ----------- | --------------------- |
-| docs        | `Documents` | Document Array.       |
-| totalDocs   | `Number`    | Total Document count. |
-| totalPages  | `Number`    | Total Page count.     |
-| currentPage | `Number`    | Current Page Number.  |
+| **prop**    | **value**   | **description**                                                                                    |
+| ----------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| docs        | `Documents` | Document Array.                                                                                    |
+| totalDocs   | `Number`    | Total Document count.                                                                              |
+| totalPages  | `Number`    | Total Page count.                                                                                  |
+| currentPage | `Number`    | Current Page Number in [pageByPage](#options) mode or how may time's data load on the current page |
 
 ## Example Use
 

@@ -115,8 +115,8 @@ const usePagination: usePaginateType = ({
       loading,
       getNext,
       getPrevious,
-      hasPrevious: 1 < lastSnap.length,
       hasNext: lastSnap.length < totals.totalPages,
+      hasPrevious: pageByPage ? 1 < lastSnap.length : false,
       data: {
         docs,
         ...totals,
