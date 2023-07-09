@@ -1,0 +1,4 @@
+{
+    "command": "node",
+    "args": ["${workspaceRoot}\\node_modules\\typescript\\bin\\tsc"]
+}
