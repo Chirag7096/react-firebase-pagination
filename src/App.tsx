@@ -19,18 +19,22 @@ type data = {
   docs: QueryDocumentSnapshot[]
 }
 
-type usePaginateType = (props: {
-  query: Query
-  pageSize: number
-  pageByPage: boolean
-  liveUpdate: boolean
-}) => {
+type hookReturnValue = {
   data: data
   error?: Error
   loading: boolean
   getNext: () => void
   getPrevious: () => void
 }
+
+type hookProps = {
+  query: Query
+  pageSize: number
+  pageByPage: boolean
+  liveUpdate: boolean
+}
+
+type usePaginateType = (props: hookProps) => hookReturnValue
 
 const addQuery = (q: Query, fun: (val: any) => any, value: any) =>
   value ? query(q, fun(value)) : q
@@ -109,6 +113,7 @@ const usePagination: usePaginateType = ({
       setQuery(q)
     }
   }
+
   return useMemo(
     () => ({
       error,
