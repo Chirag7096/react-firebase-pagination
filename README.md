@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/react-firebase-pagination.svg)](https://badge.fury.io/js/react-firebase-pagination)
+
 # react-firebase-pagination
 
 A React Hook that makes it easy to paginate Firestore collections.

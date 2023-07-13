@@ -46,14 +46,11 @@ const usePagination: usePaginateType = ({
   liveUpdate = false,
 }) => {
   const [error, setError] = useState<Error>()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const [docs, setDocs] = useState<QueryDocumentSnapshot[]>([])
   const [lastSnap, setLastSnap] = useState<QueryDocumentSnapshot[]>([])
   const [query, setQuery] = useState(addQuery(mainQuery, limit, pageSize))
-  const [totals, setTotals] = useState<{
-    totalDocs: number
-    totalPages: number
-  }>({
+  const [totals, setTotals] = useState<Pick<data, 'totalDocs' | 'totalPages'>>({
     totalDocs: 0,
     totalPages: 0,
   })
