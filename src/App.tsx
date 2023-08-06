@@ -30,8 +30,8 @@ type hookReturnValue = {
 type hookProps = {
   query: Query
   pageSize: number
-  pageByPage: boolean
-  liveUpdate: boolean
+  pageByPage?: boolean
+  liveUpdate?: boolean
 }
 
 type usePaginateType = (props: hookProps) => hookReturnValue
