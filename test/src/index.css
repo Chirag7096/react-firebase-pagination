@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Source Sans 3', 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --color-ink: #10201c;
+  --color-muted: #5c6b66;
+  --color-canvas: #f3f6f4;
+  --color-panel: #ffffff;
+  --color-line: #d5ddd9;
+  --color-accent: #0f766e;
+  --color-accent-soft: #ccfbf1;
+  --color-danger: #b91c1c;
+}
+
+@layer base {
+  body {
+    @apply m-0 min-h-svh bg-canvas font-sans text-muted antialiased;
+    background-image:
+      radial-gradient(1200px 500px at 10% -10%, rgb(15 118 110 / 0.12), transparent 55%),
+      radial-gradient(900px 400px at 100% 0%, rgb(180 140 60 / 0.1), transparent 50%);
+  }
+
+  #root {
+    @apply mx-auto min-h-svh w-full max-w-6xl;
+  }
+
+  code {
+    @apply rounded bg-line/60 px-1.5 py-0.5 font-mono text-[0.88em] text-ink;
+  }
+}

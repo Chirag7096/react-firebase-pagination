@@ -1,8 +1,27 @@
-node_modules
-.idea
-dist
-yarn-error.log
-temp_auto_push.bat
-temp_interactive_push.bat
-.gitignore
-branch_structure.json
+# dependencies
+node_modules/
+
+# build
+dist/
+
+# logs
+*.log
+npm-debug.log*
+yarn-error.log*
+bun-debug.log*
+
+# env
+.env
+.env.*
+!.env.example
+
+# coverage / caches
+coverage/
+.eslintcache
+*.tsbuildinfo
+
+# IDE / OS
+.idea/
+.DS_Store
+*.swp
+*~
