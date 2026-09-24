@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url);
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    ignores: ['dist/**', 'node_modules/**', 'test/**'],
   },
   eslint.configs.recommended,
   {

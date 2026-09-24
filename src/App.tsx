@@ -42,11 +42,16 @@ const usePagination: usePaginateType = ({ pageSize = 10, query: mainQuery, query
   const [totals, setTotals] = useState<Pick<data, 'totalDocs' | 'totalPages'>>({ totalDocs: 0, totalPages: 0 })
 
   const mainQueryRef = useRef(mainQuery)
-  mainQueryRef.current = mainQuery
-
   const navKindRef = useRef<NavKind>('reset')
   const pageByPageRef = useRef(pageByPage)
-  pageByPageRef.current = pageByPage
+
+  useEffect(() => {
+    mainQueryRef.current = mainQuery
+  }, [mainQuery])
+
+  useEffect(() => {
+    pageByPageRef.current = pageByPage
+  }, [pageByPage])
 
   const queryKeySignature = JSON.stringify(queryKey)
 
