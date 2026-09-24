@@ -2,12 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Query, DocumentData, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore'
 import { query, limit, getDocs, startAfter, onSnapshot, getCountFromServer } from 'firebase/firestore'
 
-type data = {
-  totalDocs: number
-  totalPages: number
-  currentPage: number
-  docs: QueryDocumentSnapshot[]
-}
+type data = { totalDocs: number; totalPages: number; currentPage: number; docs: QueryDocumentSnapshot[] }
 
 type hookReturnValue = {
   data: data
@@ -19,9 +14,14 @@ type hookReturnValue = {
   hasPrevious: boolean
 }
 
+/** Primitive-friendly key that identifies the logical Firestore query. */
+export type QueryKey = readonly unknown[]
+
 type hookProps = {
   query: Query
-  pageSize: number
+  /** Stable identity for `query`. Change this when sorts/filters change to reset pagination. */
+  queryKey: QueryKey
+  pageSize?: number
   pageByPage?: boolean
   liveUpdate?: boolean
 }
@@ -30,29 +30,25 @@ type NavKind = 'reset' | 'next' | 'previous' | 'idle'
 
 type usePaginateType = (props: hookProps) => hookReturnValue
 
-const addQuery = (q: Query, fun: (val: any) => any, value: any) =>
-  value ? query(q, fun(value)) : q
+const addQuery = (q: Query, fun: (val: any) => any, value: any) => (value ? query(q, fun(value)) : q)
 
-const usePagination: usePaginateType = ({
-  pageSize = 10,
-  query: mainQuery,
-  pageByPage = false,
-  liveUpdate = false,
-}) => {
+const usePagination: usePaginateType = ({ pageSize = 10, query: mainQuery, queryKey, pageByPage = false, liveUpdate = false }) => {
   const [error, setError] = useState<Error>()
   const [loading, setLoading] = useState(true)
   const [docs, setDocs] = useState<QueryDocumentSnapshot[]>([])
   /** Last document of each loaded page. Length === current page number. */
   const [pageCursors, setPageCursors] = useState<QueryDocumentSnapshot[]>([])
   const [activeQuery, setActiveQuery] = useState(() => addQuery(mainQuery, limit, pageSize))
-  const [totals, setTotals] = useState<Pick<data, 'totalDocs' | 'totalPages'>>({
-    totalDocs: 0,
-    totalPages: 0,
-  })
+  const [totals, setTotals] = useState<Pick<data, 'totalDocs' | 'totalPages'>>({ totalDocs: 0, totalPages: 0 })
+
+  const mainQueryRef = useRef(mainQuery)
+  mainQueryRef.current = mainQuery
 
   const navKindRef = useRef<NavKind>('reset')
   const pageByPageRef = useRef(pageByPage)
   pageByPageRef.current = pageByPage
+
+  const queryKeySignature = JSON.stringify(queryKey)
 
   const applySnapshot = useCallback((res: QuerySnapshot<DocumentData>) => {
     const lastDoc = res.docs[res.docs.length - 1]
@@ -72,21 +68,16 @@ const usePagination: usePaginateType = ({
       }
     } else if (kind === 'previous') {
       setDocs(res.docs)
-      // Cursors were trimmed to everything before the page we left; append this page's cursor.
       if (lastDoc) {
         setPageCursors((prev) => [...prev, lastDoc])
       }
     } else {
-      // idle: live snapshot refresh — never advance the page number
       if (pageByPageRef.current) {
         setDocs(res.docs)
         if (lastDoc) {
-          setPageCursors((prev) =>
-            prev.length === 0 ? [lastDoc] : [...prev.slice(0, -1), lastDoc],
-          )
+          setPageCursors((prev) => (prev.length === 0 ? [lastDoc] : [...prev.slice(0, -1), lastDoc]))
         }
       }
-      // Feed mode: ignore idle snapshots so accumulated pages are not wiped
     }
 
     navKindRef.current = 'idle'
@@ -98,7 +89,13 @@ const usePagination: usePaginateType = ({
     setLoading(false)
   }, [])
 
-  // Reset pagination whenever the base query or page size changes
+  const refreshTotals = useCallback(() => {
+    return getCountFromServer(mainQueryRef.current).then((res) => {
+      setTotals({ totalDocs: res.data().count, totalPages: Math.ceil(res.data().count / pageSize) || 0 })
+    })
+  }, [pageSize])
+
+  // Reset when the logical query (queryKey) or page size changes — not on Query identity
   useEffect(() => {
     let cancelled = false
     navKindRef.current = 'reset'
@@ -106,27 +103,18 @@ const usePagination: usePaginateType = ({
     setError(undefined)
     setDocs([])
     setPageCursors([])
-    setActiveQuery(addQuery(mainQuery, limit, pageSize))
+    setActiveQuery(addQuery(mainQueryRef.current, limit, pageSize))
 
-    getCountFromServer(mainQuery)
-      .then((res) => {
-        if (cancelled) return
-        setTotals({
-          totalDocs: res.data().count,
-          totalPages: Math.ceil(res.data().count / pageSize) || 0,
-        })
-      })
-      .catch((err: Error) => {
-        if (cancelled) return
-        onErr(err)
-      })
+    refreshTotals().catch((err: Error) => {
+      if (cancelled) return
+      onErr(err)
+    })
 
     return () => {
       cancelled = true
     }
-  }, [mainQuery, pageSize, onErr])
+  }, [queryKeySignature, pageSize, refreshTotals, onErr])
 
-  // Fetch / listen for the active page query only
   useEffect(() => {
     let cancelled = false
     setLoading(true)
@@ -134,9 +122,21 @@ const usePagination: usePaginateType = ({
     if (liveUpdate) {
       const unsubscribe = onSnapshot(
         activeQuery,
+        { includeMetadataChanges: true },
         (res) => {
           if (cancelled) return
-          applySnapshot(res)
+          // Skip pure metadata echoes for docs; still apply when docs/pending state matter.
+          // Recount only after local writes are acknowledged so getCountFromServer is accurate.
+          if (!res.metadata.hasPendingWrites) {
+            applySnapshot(res)
+            refreshTotals().catch((err: Error) => {
+              if (cancelled) return
+              onErr(err)
+            })
+          } else if (res.docChanges().length > 0) {
+            // Optimistic UI for local adds/removes; count updates on the follow-up snapshot.
+            applySnapshot(res)
+          }
         },
         (err) => {
           if (cancelled) return
@@ -162,7 +162,7 @@ const usePagination: usePaginateType = ({
     return () => {
       cancelled = true
     }
-  }, [activeQuery, liveUpdate, applySnapshot, onErr])
+  }, [activeQuery, liveUpdate, applySnapshot, onErr, refreshTotals])
 
   const currentPage = pageCursors.length
   const hasNext = currentPage > 0 && currentPage < totals.totalPages
@@ -174,8 +174,8 @@ const usePagination: usePaginateType = ({
     if (!cursor) return
     navKindRef.current = 'next'
     setLoading(true)
-    setActiveQuery(addQuery(addQuery(mainQuery, startAfter, cursor), limit, pageSize))
-  }, [hasNext, pageCursors, mainQuery, pageSize])
+    setActiveQuery(addQuery(addQuery(mainQueryRef.current, startAfter, cursor), limit, pageSize))
+  }, [hasNext, pageCursors, pageSize])
 
   const getPrevious = useCallback(() => {
     if (!hasPrevious) return
@@ -185,13 +185,12 @@ const usePagination: usePaginateType = ({
     setPageCursors(newCursors.length ? newCursors : [])
     setLoading(true)
     if (cursor) {
-      setActiveQuery(addQuery(addQuery(mainQuery, startAfter, cursor), limit, pageSize))
+      setActiveQuery(addQuery(addQuery(mainQueryRef.current, startAfter, cursor), limit, pageSize))
     } else {
-      // Back to first page
       navKindRef.current = 'reset'
-      setActiveQuery(addQuery(mainQuery, limit, pageSize))
+      setActiveQuery(addQuery(mainQueryRef.current, limit, pageSize))
     }
-  }, [hasPrevious, pageCursors, mainQuery, pageSize])
+  }, [hasPrevious, pageCursors, pageSize])
 
   return {
     error,

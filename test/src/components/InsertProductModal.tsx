@@ -21,10 +21,10 @@ const emptyForm = {
 
 const field =
   'grid gap-1.5 text-sm font-semibold text-ink [&_input]:rounded-lg [&_input]:border [&_input]:border-line [&_input]:bg-canvas [&_input]:px-2.5 [&_input]:py-2 [&_input]:font-normal [&_input]:text-ink [&_select]:rounded-lg [&_select]:border [&_select]:border-line [&_select]:bg-canvas [&_select]:px-2.5 [&_select]:py-2 [&_select]:font-normal [&_select]:text-ink [&_textarea]:rounded-lg [&_textarea]:border [&_textarea]:border-line [&_textarea]:bg-canvas [&_textarea]:px-2.5 [&_textarea]:py-2 [&_textarea]:font-normal [&_textarea]:text-ink'
-const btn =
-  'inline-flex items-center justify-center rounded-lg border border-line bg-panel px-3.5 py-2 text-sm font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-45'
-const btnPrimary = `${btn} border-accent bg-accent text-white`
-const btnGhost = `${btn} bg-transparent`
+const btnPrimary =
+  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-accent bg-accent px-3.5 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45'
+const btnGhost =
+  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-transparent px-3.5 py-2 text-sm font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-45'
 
 export function InsertProductModal({
   open,
@@ -155,7 +155,20 @@ export function InsertProductModal({
               Cancel
             </button>
             <button type="submit" className={btnPrimary} disabled={busy}>
-              {busy ? 'Saving…' : 'Add product'}
+              {busy ? (
+                'Saving…'
+              ) : (
+                <>
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 16 16"
+                    className="size-4 shrink-0 fill-none stroke-current stroke-2"
+                  >
+                    <path d="M8 3v10M3 8h10" strokeLinecap="round" />
+                  </svg>
+                  Add product
+                </>
+              )}
             </button>
           </footer>
         </form>
