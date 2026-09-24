@@ -25,7 +25,8 @@ yarn add react-firebase-pagination
 
 | **prop**   | **Type**  | **Default** | **description**                                                                                                                                                                                      | **Required** |
 | ---------- | --------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| query      | `Query`   | null        | The query of your Firebase database. e.g. `query(collection(db, '[collection]'))`.                                                                                                                   | ✔            |
+| query      | `Query`   | —           | The Firestore query. Safe to create inline each render; identity is driven by `queryKey`.                                                                                                            | ✔            |
+| queryKey   | `unknown[]` | —         | Stable key for the logical query (sorts, filters, collection). Change it when the query meaning changes — pagination resets to page 1.                                                               | ✔            |
 | pageSize   | `Number`  | 10          | The number of items per page.                                                                                                                                                                        |              |
 | pageByPage | `Boolean` | false       | When this option is True, data is loaded page by page like Google search, and when it's not, it loads data on a single page and appends new data on the bottom of current data like a Facebook feed. |              |
 | liveUpdate | `Boolean` | false       | Add Firebase snapshot listener to update data live                                                                                                                                                   |              |
@@ -52,23 +53,28 @@ yarn add react-firebase-pagination
 
 ## Example Use
 
-This is an example of a [Firestore](https://firebase.google.com/docs/firestore/).
-
-You can also change query during runtime. Hook will detect new query and start pagination from the beginning.
-Here is an example of controlling query's `orderDirection` by React's state:
+This is an example of a [Firestore](https://firebase.google.com/docs/firestore/) query. You can rebuild `query(...)` every render — pass a `queryKey` so the hook only resets when sorts/filters actually change:
 
 ```jsx
-import usePagination from 'react-firebase-pagination';
+import usePagination from 'react-firebase-pagination'
 import { query, orderBy, collection } from 'firebase/firestore'
-import db from './your/database/path';
-
-const mainQuery = query(collection(db, '[collection]'), orderBy('created_timestamp', 'desc'));
+import db from './your/database/path'
 
 const App = () => {
+  const [sort, setSort] = useState('newest') // 'newest' | 'oldest' | ...
+
+  const mainQuery = query(
+    collection(db, '[collection]'),
+    sort === 'oldest'
+      ? orderBy('created_timestamp', 'asc')
+      : orderBy('created_timestamp', 'desc'),
+  )
+
   const { getNext, getPrevious, data, loading } = usePagination({
     pageSize: 10,
     pageByPage: true,
     query: mainQuery,
+    queryKey: ['[collection]', sort],
   })
 
   if (loading) {

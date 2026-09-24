@@ -6,10 +6,10 @@ type DeleteConfirmModalProps = {
   onConfirm: () => Promise<void>
 }
 
-const btn =
-  'inline-flex items-center justify-center rounded-lg border border-line bg-panel px-3.5 py-2 text-sm font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-45'
-const btnGhost = `${btn} bg-transparent`
-const btnDanger = `${btn} border-danger bg-danger text-white`
+const btnGhost =
+  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-line bg-transparent px-3.5 py-2 text-sm font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-45'
+const btnDanger =
+  'inline-flex items-center justify-center gap-1.5 rounded-lg border border-danger bg-danger px-3.5 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45'
 
 export function DeleteConfirmModal({
   open,
