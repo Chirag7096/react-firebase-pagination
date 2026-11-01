@@ -19,7 +19,7 @@
     "url": "git+https://github.com/Chirag7096/react-firebase-pagination.git"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "node api.js && tsc",
     "lint": "eslint .",
     "prettier": "prettier --write \"src/**/*.{js,ts,jsx,tsx}\"",
     "prepare": "bun run build",
